@@ -10,3 +10,46 @@
     "cors": "^2.8.5"
   }
 }
+
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+app.use(cors()); // allow cross-origin requests from your frontend
+app.use(express.json());
+
+let products = [
+  { id: 1, title: "Steam Key", price: 15, description: "Global Steam Activation Key." },
+  { id: 2, title: "Discord Nitro", price: 10, description: "1 month Nitro subscription." },
+  { id: 3, title: "Fortnite Account", price: 25, description: "Account with skins and battle pass." },
+  { id: 4, title: "Windows 10 Key", price: 20, description: "Genuine Windows 10 Activation." }
+];
+
+let sales = []; // will store sales here
+
+app.get('/', (req, res) => {
+  res.send('LeoPar Marketplace backend running!');
+});
+
+app.get('/products', (req, res) => {
+  res.json(products);
+});
+
+app.post('/sales', (req, res) => {
+  const sale = req.body;
+  if (!sale.productId || !sale.buyerEmail) {
+    return res.status(400).json({ success: false, message: 'Missing productId or buyerEmail' });
+  }
+  sales.push(sale);
+  console.log('New sale:', sale);
+  res.json({ success: true });
+});
+
+app.get('/sales', (req, res) => {
+  res.json(sales);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
